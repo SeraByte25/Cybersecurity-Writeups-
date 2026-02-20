@@ -1,4 +1,5 @@
 I beging with the next room 
+
 <img width="755" height="306" alt="image" src="https://github.com/user-attachments/assets/f155c47b-5e90-4d59-8a9c-7f25e69aa115" />
 
 We have the IP and the only clue "http://10.80.158.20:8080/flag.txt"
@@ -83,8 +84,8 @@ We can try a XSS with the textarea, </textarea><script>alert('SeraByte');</scrip
 
 But nothing again
 We try another XSS
-  "<img src=x onerror=alert(1)>"
-  ""><img src=x onerror=alert(1)>"
+  &lt img src=x onerror=alert(1)>
+  ">&ltimg src=x onerror=alert(1)>
 
 We don't have success
 What happend if we try a reverse shell? 
