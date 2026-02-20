@@ -18,6 +18,8 @@ Use gobuster to enumerate the ip, with a little lucky we can find hidden directo
 
 <img width="559" height="309" alt="image" src="https://github.com/user-attachments/assets/17ca952c-ae60-405b-8d14-213d5735ea63" />
 
+Note: In the end, it's not useful
+
 While gobuster ir running, we go to check aroung the page 
 
 In the source code find the diretory /static, that's where the images are stored 
@@ -46,7 +48,7 @@ Then, we use the HEAD method
 
 But, we don't get anything again
 
-Not all is losed 
+Further testing was required
 
 Looking around the page, there is a nother page, the feedback
 
@@ -127,7 +129,7 @@ We start the listener, and submit the script
 
 <img width="317" height="107" alt="image" src="https://github.com/user-attachments/assets/46f392e3-6fc8-4632-ba3b-2f946c6e4458" />
 
-Nice, we get the flag
+The flag was successfully exfiltrated
 
 <img width="653" height="199" alt="image" src="https://github.com/user-attachments/assets/178dc705-6ab4-469f-b1a1-daf9eb2dbf13" />
 
@@ -136,3 +138,12 @@ Using a simple command, like "echo <string-base64> | base64 -d" we can get the f
 
 <img width="675" height="84" alt="image" src="https://github.com/user-attachments/assets/0014af9e-0555-46a3-b405-826a52d1d922" />
 
+
+Security Impact
+This vulnerability demonstrates how stored XSS combined with an admin review bot can lead to privilege escalation and data exfiltration.
+
+Defensive Considerations
+- Proper output encoding
+- Content Security Policy
+- Input sanitization
+- Avoid rendering user-controlled HTML
