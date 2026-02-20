@@ -53,7 +53,7 @@ Looking around the page, there is a nother page, the feedback
 
 We send a "feedback" for test
 
-<img width="342" height="274" alt="image" src="https://github.com/user-attachments/assets/e49d9f42-3cda-4a08-901e-7ec26a541bf2" />
+<img width="222" height="131" alt="image" src="https://github.com/user-attachments/assets/57248baa-2b42-4229-a5d2-dcf94feddefb" />
 <img width="582" height="146" alt="image" src="https://github.com/user-attachments/assets/72038989-8280-40e8-8bdf-044558258208" />
 
 We have success to send the test message
@@ -67,7 +67,33 @@ We don't get the alert
 <img width="609" height="394" alt="image" src="https://github.com/user-attachments/assets/28b1ca66-566e-4b91-b313-ff911c6e4202" />
 
 Maybe there's a filter
-We can try it again, now use: "><script>alert('THM');</script>
+We can try it again, now use: "><script>alert('SeraByte');</script>
 
-<img width="361" height="193" alt="image" src="https://github.com/user-attachments/assets/a8e548c8-4b22-4a70-a5d2-6e7af40eab72" />
+<img width="375" height="123" alt="image" src="https://github.com/user-attachments/assets/eb3455dc-7443-49c2-890c-d1b952966437" />
+
+But we don't get anything again, 
+
+Checking the source code, we don't get a clue that help us to resolve it 
+
+<img width="759" height="136" alt="image" src="https://github.com/user-attachments/assets/79ae8e8f-d4c4-47f7-8b4d-b22256eb955c" />
+
+We can try a XSS with the textarea, </textarea><script>alert('SeraByte');</script>
+
+<img width="362" height="125" alt="image" src="https://github.com/user-attachments/assets/6b0ef981-baeb-4005-82b5-d16aeecf268c" />
+
+But nothing again
+We try another XSS
+  <img src=x onerror=alert(1)>
+  "><img src=x onerror=alert(1)>
+
+We don't have success
+What happend if we try a reverse shell? 
+We run a listener 
+
+<img width="244" height="80" alt="image" src="https://github.com/user-attachments/assets/6d0827f8-1297-436d-9f28-aea02f3b3693" />
+
+
+ We use the next script: "<img src="http://<IP>:443/test">"
+
+<img width="310" height="104" alt="image" src="https://github.com/user-attachments/assets/83aaa2aa-1183-4828-847c-64df5485c842" />
 
