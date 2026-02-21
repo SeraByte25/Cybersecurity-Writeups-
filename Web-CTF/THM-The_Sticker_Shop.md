@@ -65,7 +65,9 @@ We send a "feedback" for test
 <img width="582" height="146" alt="image" src="https://github.com/user-attachments/assets/72038989-8280-40e8-8bdf-044558258208" />
 
 We have success to send the test message
+
 But, where to went?
+
 At this stage, I began testing for Cross-Site Scripting (XSS) vulnerabilities in the feedback form.
 
 Initial payloads such as:
