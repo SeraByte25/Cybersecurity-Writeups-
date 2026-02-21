@@ -1,3 +1,7 @@
+## Attack Vector Overview
+
+The objective was to obtain access to a protected resource ("/flag.txt") exposed on the web server. Direct access was restricted, requiring alternative exploitation techniques.
+
 ## Initial Enumeration
 
 I started the assessment by reviewing the information provided in the room description.
@@ -12,19 +16,19 @@ Accessing the provided URL directly returned a 401 Unauthorized response, indica
 
 This suggests that direct access to /flag.txt is restricted and another attack vector is required.
 
-Then, we delete /flag.txt in the URL, we got the kitty shop (sticker shop)
+After removing "/flag.txt" from the URL, the main application was revealed: a sticker shop interface.
 
 <img width="708" height="638" alt="image" src="https://github.com/user-attachments/assets/9dcde84b-0ae7-4717-b895-b005370dfbd8" />
 
-Use gobuster to enumerate the ip, with a little lucky we can find hidden directories
+I used Gobuster to perform directory enumeration in order to identify potential hidden endpoints.
 
 <img width="559" height="309" alt="image" src="https://github.com/user-attachments/assets/17ca952c-ae60-405b-8d14-213d5735ea63" />
 
 Although directory enumeration did not reveal anything directly useful, it helped confirm that no obvious hidden endpoints were exposed.
 
-While gobuster ir running, we go to check aroung the page 
+While Gobuster was running, I manually inspected the application.
 
-In the source code find the diretory /static, that's where the images are stored 
+Reviewing the source code revealed a "/static" directory used to store application assets such as images.
 
 <img width="747" height="299" alt="image" src="https://github.com/user-attachments/assets/2e84cec9-b9be-448b-8d35-c5943216c10a" />
 
@@ -80,12 +84,11 @@ did not execute, suggesting possible filtering or output encoding
 
 <img width="609" height="394" alt="image" src="https://github.com/user-attachments/assets/28b1ca66-566e-4b91-b313-ff911c6e4202" />
 
-Maybe there's a filter
+The payload did not execute, indicating possible input filtering or output encoding mechanisms.
+
 We can try it again, now use: "><script>alert('SeraByte');</script>
 
 <img width="375" height="123" alt="image" src="https://github.com/user-attachments/assets/eb3455dc-7443-49c2-890c-d1b952966437" />
-
-But we don't get anything again, 
 
 Checking the source code, we don't get a clue that help us to resolve it 
 
@@ -98,8 +101,7 @@ We can try a XSS with the textarea, </textarea><script>alert('SeraByte');</scrip
   &lt img src=x onerror=alert(1)>
   ">&ltimg src=x onerror=alert(1)>
 
-What happend if we try a reverse shell? 
-We run a listener 
+To determine whether the input was being processed by an automated system, I submitted an image payload referencing my external listener.
 
 <img width="244" height="80" alt="image" src="https://github.com/user-attachments/assets/6d0827f8-1297-436d-9f28-aea02f3b3693" />
 
@@ -113,8 +115,12 @@ This confirmed the presence of a stored XSS vulnerability and suggested that an 
 <img width="441" height="221" alt="image" src="https://github.com/user-attachments/assets/f85b7107-4d27-4805-99a7-e9230b188f8b" />
 
 After submitting test payloads, I noticed that while no alert executed in my browser, the server interacted with my external listener when an image payload was submitted.
-Now we are sure that it's a stored XSS, and there's a bot checking for the messages
-We need a script to do the bot get us the flag
+
+The external interaction confirmed that user-supplied input was being rendered in a privileged context.
+
+This behavior strongly suggested a stored XSS vulnerability combined with an automated review bot operating with elevated privileges.
+
+The next step was to craft a payload capable of retrieving the protected resource and exfiltrating its contents.
 
 To exploit the stored XSS, I crafted a payload to retrieve the protected resource:
 
