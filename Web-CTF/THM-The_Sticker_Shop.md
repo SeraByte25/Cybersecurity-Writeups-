@@ -6,6 +6,8 @@ The objective was to obtain access to a protected resource ("/flag.txt") exposed
 
 I started the assessment by reviewing the information provided in the room description.
 
+          https://tryhackme.com/room/thestickershop
+
 <img width="755" height="306" alt="image" src="https://github.com/user-attachments/assets/f155c47b-5e90-4d59-8a9c-7f25e69aa115" />
 
 We have the IP and the only clue "http://10.80.158.20:8080/flag.txt"
